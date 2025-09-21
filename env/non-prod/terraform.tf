@@ -11,3 +11,5 @@ resource "aws_ecr_repository" "my_repo" {
 
   image_tag_mutability = "MUTABLE"
 }
+
+
