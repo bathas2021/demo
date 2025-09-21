@@ -24,12 +24,12 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
           
       - name: Login to AWS ECR
         uses: aws-actions/amazon-ecr-login@v2
         with:
-          region: ${{ AWS_REGION }}
+          region: ${{ env.AWS_REGION }}
 
       - name: Build Docker Image
         run: docker build -t $myapp:$IMAGE_TAG .
@@ -55,7 +55,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: "us-east-1"
 
       - name: Trigger EC2 startup script via SSM
         run: |
