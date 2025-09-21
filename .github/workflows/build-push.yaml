@@ -12,7 +12,7 @@ jobs:
       name: non-prod  
     env:
       AWS_REGION: "us-east-1"
-      ECR_REPO_NAME: myapp-repo
+      ECR_REPO_NAME: demo
       IMAGE_TAG: latest
     steps:
       - name: Checkout code
