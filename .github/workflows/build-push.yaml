@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    environment: 
+      name: non-prod  
     env:
       AWS_REGION: "us-east-1"
       ECR_REPO_NAME: myapp-repo
@@ -46,6 +48,8 @@ jobs:
   trigger-ec2-startup:
     runs-on: ubuntu-latest
     needs: build-and-push
+    name: non-prod  
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
