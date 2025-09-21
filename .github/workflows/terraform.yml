@@ -20,7 +20,7 @@ on:
 
 
 jobs:
-  terraform:
+  terraform-plan:
     runs-on: ubuntu-latest
     environment: 
       name: ${{ github.event_name == 'push' && 'non-prod' || github.event.inputs.environment }}
@@ -42,6 +42,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "asia-south-1"
           
       - name: Terraform Init
         run: terraform init -input=false
@@ -52,9 +53,18 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -input=false -out=tfplan
 
-      - name: Terraform Apply 
-        run: terraform apply -input=false -auto-approve tfplan
 
-      - name: Terraform Apply
-        run: terraform apply -input=false -auto-approve tfplan
- 
+
+  terraform-apply:
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ github.event_name == 'push' && 'non-prod' || github.event.inputs.environment }}
+
+    defaults:
+      run:
+        working-directory: env/${{ github.event_name == 'push' && 'non-prod' || github.event.inputs.environment }} 
+    steps:
+    
+      - name: Terraform Apply 
+        run: terraform apply -input=false -auto-approve tfplan        
+
