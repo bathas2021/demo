@@ -13,7 +13,7 @@ jobs:
       name: non-prod  
     env:
       AWS_REGION: "us-east-1"
-      ECR_REPO_NAME: demo
+      ECR_REPO_NAME: myapp
       IMAGE_TAG: latest
     steps:
       - name: Checkout code
@@ -67,6 +67,7 @@ jobs:
 
       - name: Trigger EC2 startup script via SSM
         run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
           echo "Fetching running EC2 instances..."
           INSTANCE_IDS=$(aws ec2 describe-instances \
             --filters "Name=tag:Name,Values=myapp-ec2-*" "Name=instance-state-name,Values=running" \
@@ -76,8 +77,13 @@ jobs:
           for instance in $INSTANCE_IDS; do
             echo "Triggering startup script on $instance..."
             aws ssm send-command \
-              --targets "Key=instanceIds,Values=$instance" \
+              --targets "Key=instanceIds,Values=$INSTANCE_ID" \
               --document-name "AWS-RunShellScript" \
-              --comment "Re-run startup script for Docker deployment" \
-              --parameters 'commands=["sudo /usr/local/bin/startup.sh"]'
+              --comment "Update Docker container" \
+              --parameters 'commands=[
+                "docker stop myapp || true",
+                "docker rm myapp || true",
+                "docker pull $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/myapp:latest",
+                "systemctl restart myapp"
+              ]'
           done
