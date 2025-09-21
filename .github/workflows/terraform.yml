@@ -56,6 +56,8 @@ jobs:
 
 
   terraform-apply:
+    name: Terraform apply
+    needs: terraform-plan
     runs-on: ubuntu-latest
     environment: 
       name: ${{ github.event_name == 'push' && 'non-prod' || github.event.inputs.environment }}
