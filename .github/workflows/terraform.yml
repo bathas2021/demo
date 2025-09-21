@@ -4,19 +4,17 @@ name: Terraform Deploy
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    paths:
-      - 'env/**'
-  pull_request:
-    paths:
-      - 'env/**'
+    branches: ["main"]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
       environment:
+        type: choice
         description: "Environment to deploy (prod and non-prod)"
+        options: 
+          - non-prod
+          - prod
         required: true
         default: "non-prod"
 
@@ -24,16 +22,13 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        env:
-          - non-prod
-          - prod
+    environment: 
+      name: ${{ github.event_name == 'push' && 'non-prod' || github.event.inputs.environment }}
 
     defaults:
       run:
-        working-directory: env/${{ matrix.env }}
+        working-directory: env/${{ github.event_name == 'push' && 'non-prod' || github.event.inputs.environment }}
+
 
     steps:
       - name: Checkout
@@ -57,12 +52,9 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -input=false -out=tfplan
 
-      - name: Terraform Apply (non-prod auto)
-        if: matrix.env == 'non-prod'
+      - name: Terraform Apply 
         run: terraform apply -input=false -auto-approve tfplan
 
-      - name: Terraform Apply (prod requires approval)
-        if: matrix.env == 'prod'
-        environment: prod   # 🔐 Protected environment in GitHub settings
+      - name: Terraform Apply
         run: terraform apply -input=false -auto-approve tfplan
  
