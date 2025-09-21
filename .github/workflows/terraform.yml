@@ -51,7 +51,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -input=false -out=tfplan
+        run: terraform plan -out=tfplan
 
 
 
@@ -64,9 +64,10 @@ jobs:
 
     defaults:
       run:
-        working-directory: env/${{ github.event_name == 'push' && 'non-prod' || github.event.inputs.environment }} 
+        working-directory: env/${{ github.event_name == 'push' && 'non-prod' || github.event.inputs.environment }}
+        
     steps:
     
       - name: Terraform Apply 
-        run: terraform apply -input=false -auto-approve tfplan        
+        run: terraform apply  -auto-approve tfplan        
 
