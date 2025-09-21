@@ -75,6 +75,8 @@ jobs:
         working-directory: env/${{ github.event_name == 'push' && 'non-prod' || github.event.inputs.environment }}
         
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         
