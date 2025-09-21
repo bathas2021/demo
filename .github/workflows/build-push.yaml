@@ -34,7 +34,7 @@ jobs:
           region: ${{ env.AWS_REGION }}
 
       - name: Build Docker Image
-        run: docker build -t $myapp:$IMAGE_TAG .
+        run: docker build -t myapp:$IMAGE_TAG .
       
       - name: Tag Docker Image for ECR
         run: |
