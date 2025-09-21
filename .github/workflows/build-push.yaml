@@ -34,7 +34,6 @@ jobs:
       - name: Build Docker Image
         run: docker build -t $myapp:$IMAGE_TAG .
       
-          934192905430.dkr.ecr.us-east-1.amazonaws.com/myapp:latest
       - name: Tag Docker Image for ECR
         run: |
           docker tag $ECR_REPO_NAME:$IMAGE_TAG $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:$IMAGE_TAG
