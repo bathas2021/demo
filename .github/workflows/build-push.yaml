@@ -72,11 +72,12 @@ jobs:
             --filters "Name=tag:Name,Values=myapp-ec2-*" "Name=instance-state-name,Values=running" \
             --query "Reservations[*].Instances[*].InstanceId" \
             --output text)
-
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          
           for instance in $INSTANCE_IDS; do
             echo "Triggering startup script on $instance..."
             aws ssm send-command \
-              --targets "Key=instanceIds,Values=$INSTANCE_ID" \
+              --targets "Key=instanceIds,Values=$INSTANCE_IDS" \
               --document-name "AWS-RunShellScript" \
               --comment "Update Docker container" \
               --parameters 'commands=[
