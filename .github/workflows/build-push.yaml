@@ -38,7 +38,8 @@ jobs:
       
       - name: Tag Docker Image for ECR
         run: |
-          docker tag $ECR_REPO_NAME:$IMAGE_TAG $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:$IMAGE_TAG
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          docker tag myapp:$IMAGE_TAG $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:$IMAGE_TAG
 
       - name: Push Docker Image to ECR
         run: |
