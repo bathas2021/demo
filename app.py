@@ -18,17 +18,15 @@ def info():
     except Exception:
         pass  
     try:
-        response = requests.get("http://169.254.169.254/latest/meta-data/instance-id", headers=headers,timeout=1)
+        response = requests.get("http://169.254.169.254/latest/dynamic/instance-identity/document", headers=headers,timeout=1) 
         response.raise_for_status()
-        instance_id = response.text
+        # instance_id = response.text 
+        data = response.json()
+        instance_id = data.get("instanceId", "not running on an EC2 instance")
+        availability_zone = data.get("availabilityZone", "not running on an EC2 instance")
     except Exception:
+        # availability_zone = "not running on an EC2 instance"
         instance_id = "not running on an EC2 instance"
-
-    try:
-        response = requests.get("http://169.254.169.254/latest/meta-data/placement/availability-zone", headers=headers,timeout=1)
-        response.raise_for_status()
-        availability_zone = response.text
-    except Exception:
         availability_zone = "not running on an EC2 instance"
 
     return jsonify({
